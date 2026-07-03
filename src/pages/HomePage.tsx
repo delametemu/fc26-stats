@@ -78,9 +78,12 @@ export default function HomePage() {
         <div className="loading">Loading leaderboard…</div>
       ) : lbError ? (
         <div className="error">
-          {lbError}
-          <br />
+          <div>{lbError}</div>
           <small>EA&apos;s API may be temporarily down — try again shortly.</small>
+          <br />
+          <button onClick={loadLeaderboard} className="btn btn-primary" style={{ marginTop: "1rem" }}>
+            Retry
+          </button>
         </div>
       ) : (
         <LeaderboardTable results={leaderboard} title="Top Clubs — All Time" />

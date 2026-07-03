@@ -41,8 +41,8 @@ const CACHE_TTL = {
   leaderboard: 180_000,
 };
 
-const MAX_RETRIES = 3;
-const INITIAL_RETRY_DELAY = 1000; // 1 second
+const MAX_RETRIES = 5;
+const INITIAL_RETRY_DELAY = 1500; // 1.5 seconds
 
 async function delay(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -78,8 +78,9 @@ async function eaFetch<T>(endpoint: string, params: Record<string, string | numb
           const errorMsg = `EA API error ${response.status} for ${endpoint}`;
           lastError = new Error(errorMsg);
 
-          // Retry on 403, 429 (rate limit), 502, 503, 504 (server errors)
-          const retryableStatuses = [403, 429, 502, 503, 504];
+          // Retry on 403, 404, 429 (rate limit), 502, 503, 504 (server errors)
+          // Include 404 as EA API sometimes returns it temporarily
+          const retryableStatuses = [403, 404, 429, 502, 503, 504];
           if (retryableStatuses.includes(response.status) && attempt < MAX_RETRIES) {
             const delayMs = INITIAL_RETRY_DELAY * Math.pow(2, attempt);
             console.log(`[Attempt ${attempt + 1}/${MAX_RETRIES + 1}] Got ${response.status}, retrying ${endpoint} in ${delayMs}ms...`);
