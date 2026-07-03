@@ -74,8 +74,8 @@ export default function PlayerCards({ members }: Props) {
                 <span className="card-label">Pass %</span>
               </div>
               <div>
-                <span className="card-value">{shotPct(p)}</span>
-                <span className="card-label">Shot %</span>
+                <span className={`card-value ${Number(p.redCards) > 0 ? "result-l" : ""}`}>{num(p.redCards)}</span>
+                <span className="card-label">Red Cards</span>
               </div>
             </div>
           </article>

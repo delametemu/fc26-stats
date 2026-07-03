@@ -41,6 +41,7 @@ export default function PlayerTable({ members }: Props) {
             <th className="num">Tackle%</th>
             <th className="num">Shot%</th>
             <th className="num">MOTM</th>
+            <th className="num">Red Cards</th>
           </tr>
         </thead>
         <tbody>
@@ -67,6 +68,7 @@ export default function PlayerTable({ members }: Props) {
                 <td className="num">{tacklePct(p)}</td>
                 <td className="num">{shotPct(p)}</td>
                 <td className="num">{momCount(p)}</td>
+                <td className={`num ${Number(p.redCards) > 0 ? "result-l" : ""}`}>{num(p.redCards)}</td>
               </tr>
             );
           })}
