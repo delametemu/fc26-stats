@@ -7,9 +7,13 @@ import {
   playerStatRows,
   positionLabel,
   ratingClass,
+  redCards,
+  yellowCards,
   type MatchSide,
   type PositionGroup,
 } from "../lib/matchStats";
+import { isNigerian, NigerianFlag, useClubExtras } from "./ClubExtrasContext";
+import { CardIcon, FootIcon } from "./icons";
 
 interface Props {
   match: Match;
@@ -54,9 +58,13 @@ function PersonIcon() {
 }
 
 function PitchPlayerNode({ node, onSelect }: { node: PitchNode; onSelect: (p: MatchPlayerRow) => void }) {
+  const extras = useClubExtras();
   const rating = parseFloat(node.player.rating);
   const isMotm = node.player.mom === "1";
   const goals = Number(node.player.goals);
+  const assists = Number(node.player.assists);
+  const reds = redCards(node.player);
+  const yellows = yellowCards(node.player);
 
   return (
     <button
@@ -76,20 +84,38 @@ function PitchPlayerNode({ node, onSelect }: { node: PitchNode; onSelect: (p: Ma
             ⚽{goals > 1 ? goals : ""}
           </span>
         )}
+        {assists > 0 && (
+          <span className="pitch-assist-badge" title={`${assists} assist${assists > 1 ? "s" : ""}`}>
+            <FootIcon size={11} />
+            {assists > 1 ? assists : ""}
+          </span>
+        )}
+        {(reds > 0 || yellows > 0) && (
+          <span className="pitch-card-badge" title={reds > 0 ? "Red card" : "Yellow card"}>
+            <CardIcon color={reds > 0 ? "red" : "yellow"} size={9} />
+          </span>
+        )}
       </span>
-      <span className="pitch-player-name">{node.player.playername}</span>
+      <span className="pitch-player-name">
+        {node.player.playername}
+        <NigerianFlag show={isNigerian(extras, node.player.playername)} compact />
+      </span>
     </button>
   );
 }
 
 function PlayerStatModal({ player, onClose }: { player: MatchPlayerRow; onClose: () => void }) {
+  const extras = useClubExtras();
   const rows = playerStatRows(player);
   return (
     <div className="stat-modal-backdrop" onClick={onClose}>
       <div className="stat-modal" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
         <div className="stat-modal-header">
           <div>
-            <h3>{player.playername}</h3>
+            <h3>
+              {player.playername}
+              <NigerianFlag show={isNigerian(extras, player.playername)} />
+            </h3>
             <span className="pos-badge">{positionLabel(player.pos)}</span>
           </div>
           <button type="button" className="stat-modal-close" onClick={onClose} aria-label="Close">

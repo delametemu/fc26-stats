@@ -1157,6 +1157,223 @@ tr:hover td {
   flex: 0 0 auto;
 }
 
+/* ---------- Assist / card icons ---------- */
+
+.foot-icon {
+  vertical-align: -0.15em;
+  color: var(--accent);
+}
+
+.assist-line .foot-icon {
+  margin-right: 0.1rem;
+}
+
+.card-icon {
+  vertical-align: -0.15em;
+}
+
+.contrib-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.pitch-assist-badge {
+  position: absolute;
+  bottom: -0.4rem;
+  left: -0.4rem;
+  font-size: 0.6rem;
+  background: var(--bg-card);
+  border-radius: 6px;
+  padding: 0.05rem 0.15rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+.pitch-card-badge {
+  position: absolute;
+  bottom: -0.4rem;
+  right: -0.3rem;
+  display: inline-flex;
+  background: var(--bg-card);
+  border-radius: 4px;
+  padding: 0.1rem 0.15rem;
+}
+
+/* ---------- Nigerian of the Match ---------- */
+
+.nigerian-flag {
+  margin-left: 0.3rem;
+  font-size: 0.9em;
+}
+
+.nigerian-flag.compact {
+  margin-left: 0.15rem;
+  font-size: 0.8em;
+}
+
+.nigerian-form-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+.nigerian-form-row label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 180px;
+  flex: 1;
+}
+
+.nigerian-input {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.45rem 0.75rem;
+  color: var(--text);
+  font-size: 0.85rem;
+  outline: none;
+}
+
+.nigerian-input:focus {
+  border-color: var(--accent-dim);
+}
+
+.nigerian-award-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.nigerian-award-row:last-child {
+  border-bottom: none;
+}
+
+.btn-small {
+  padding: 0.35rem 0.65rem;
+  font-size: 0.8rem;
+}
+
+/* ---------- Plur of the Day ---------- */
+
+.potd-vote-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.potd-tallies {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.potd-tally-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 180px) 1fr 2.5rem;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.potd-tally-name {
+  font-weight: 600;
+  font-size: 0.875rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.potd-tally-bar-wrap {
+  height: 0.6rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.potd-tally-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-dim), var(--accent));
+  border-radius: 999px;
+  min-width: 2px;
+  transition: width 0.3s ease;
+}
+
+.potd-tally-votes {
+  font-weight: 700;
+}
+
+.potd-history {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.potd-history-row {
+  display: grid;
+  grid-template-columns: 6.5rem 1fr auto;
+  gap: 0.75rem;
+  align-items: baseline;
+  font-size: 0.875rem;
+}
+
+/* ---------- Match clips ---------- */
+
+.match-clips {
+  border-top: 1px solid var(--border);
+  margin-top: 1rem;
+  padding: 0.85rem 0 0.25rem;
+}
+
+.match-clips-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.match-clips-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.65rem;
+}
+
+.match-clips-form .nigerian-input {
+  flex: 1;
+  min-width: 200px;
+}
+
+.match-clips-list {
+  margin-top: 0.65rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.match-clip-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.875rem;
+  padding: 0.35rem 0;
+}
+
+.match-clip-row a {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 @media (max-width: 640px) {
   .pitch-player {
     width: 3.4rem;

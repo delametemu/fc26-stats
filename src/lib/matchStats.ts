@@ -89,6 +89,25 @@ export interface StatRow {
   value: string;
 }
 
+/**
+ * Dribble success rate. EA's public Pro Clubs API doesn't always expose dribble
+ * stats — when the fields are missing we return null and the UI shows "—".
+ */
+export function dribbleStats(p: MatchPlayerRow): { made: number; attempts: number; pct: number } | null {
+  const made = Number(p.dribblesmade ?? p.dribbles ?? p.dribblesucceeded ?? NaN);
+  const attempts = Number(p.dribbleattempts ?? p.dribblesattempted ?? NaN);
+  if (Number.isNaN(made) || Number.isNaN(attempts) || attempts <= 0) return null;
+  return { made, attempts, pct: (made / attempts) * 100 };
+}
+
+export function yellowCards(p: MatchPlayerRow): number {
+  return Number(p.yellowcards ?? 0) || 0;
+}
+
+export function redCards(p: MatchPlayerRow): number {
+  return Number(p.redcards ?? 0) || 0;
+}
+
 /** Every EA-provided stat for a player in this match, sourced live from proclubs.ea.com. */
 export function playerStatRows(player: MatchPlayerRow): StatRow[] {
   const passPct = pctOf(Number(player.passesmade), Number(player.passattempts));
@@ -97,6 +116,8 @@ export function playerStatRows(player: MatchPlayerRow): StatRow[] {
   const minutes = minutesPlayed(player);
   const resultLabel = player.wins === "1" ? "Win" : player.losses === "1" ? "Loss" : "Draw";
   const rating = parseFloat(player.rating);
+  const dribbles = dribbleStats(player);
+  const yellows = yellowCards(player);
 
   return [
     { label: "EA Match Rating", value: Number.isNaN(rating) ? "—" : rating.toFixed(1) },
@@ -112,9 +133,14 @@ export function playerStatRows(player: MatchPlayerRow): StatRow[] {
       label: "Tackles",
       value: `${player.tacklesmade}/${player.tackleattempts}${tacklePct !== null ? ` (${tacklePct.toFixed(0)}%)` : ""}`,
     },
+    {
+      label: "Dribble Success",
+      value: dribbles ? `${dribbles.made}/${dribbles.attempts} (${dribbles.pct.toFixed(0)}%)` : "—",
+    },
     ...(isGk || Number(player.saves) > 0 ? [{ label: "Saves", value: player.saves }] : []),
     { label: "Goals Conceded", value: player.goalsconceded },
     { label: "Clean Sheet", value: Number(player.cleansheetsany) > 0 ? "Yes" : "No" },
+    ...(yellows > 0 ? [{ label: "Yellow Cards", value: `🟨 ${yellows}` }] : []),
     { label: "Red Cards", value: Number(player.redcards) > 0 ? "🟥 Yes" : "None" },
     { label: "Result", value: resultLabel },
     { label: "Man of the Match", value: player.mom === "1" ? "⭐ Yes" : "No" },

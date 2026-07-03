@@ -1,7 +1,16 @@
-import type { ClubDashboard, ClubSearchResult, Platform } from "./types";
+import type {
+  ClipsByMatch,
+  ClubDashboard,
+  ClubSearchResult,
+  MatchClip,
+  NigerianData,
+  Platform,
+  PotdData,
+  SavedMatch,
+} from "./types";
 
-async function apiFetch<T>(path: string): Promise<T> {
-  const res = await fetch(path);
+async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
+  const res = await fetch(path, init);
   
   if (!res.ok) {
     const contentType = res.headers.get("content-type");
@@ -49,6 +58,80 @@ export function getClubDashboard(clubId: string, platform: Platform) {
 export function getLeaderboard(platform: Platform, type: "allTime" | "currentSeason" = "allTime") {
   const params = new URLSearchParams({ platform, type, count: "25" });
   return apiFetch<{ results: ClubSearchResult[] }>(`/api/leaderboard?${params}`);
+}
+
+function postJson<T>(path: string, body: unknown): Promise<T> {
+  return apiFetch<T>(path, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+}
+
+/** Stable anonymous id for this browser, used for one-vote-per-person voting. */
+export function getVoterId(): string {
+  const KEY = "fc26-voter-id";
+  let id = localStorage.getItem(KEY);
+  if (!id) {
+    id = crypto.randomUUID();
+    localStorage.setItem(KEY, id);
+  }
+  return id;
+}
+
+export function getNigerianData(clubId: string) {
+  return apiFetch<NigerianData>(`/api/club/${clubId}/nigerian`);
+}
+
+export function awardNigerian(
+  clubId: string,
+  playerName: string,
+  matchId?: string,
+  opponentName?: string,
+  note?: string,
+) {
+  return postJson<NigerianData & { award: unknown }>(`/api/club/${clubId}/nigerian`, {
+    playerName,
+    matchId,
+    opponentName,
+    note,
+  });
+}
+
+export function removeNigerianAward(clubId: string, awardId: string) {
+  return apiFetch<NigerianData>(`/api/club/${clubId}/nigerian/${awardId}`, { method: "DELETE" });
+}
+
+export function getPotd(clubId: string) {
+  const params = new URLSearchParams({ voterId: getVoterId() });
+  return apiFetch<PotdData>(`/api/club/${clubId}/potd?${params}`);
+}
+
+export function votePotd(clubId: string, playerName: string) {
+  return postJson<PotdData>(`/api/club/${clubId}/potd/vote`, {
+    playerName,
+    voterId: getVoterId(),
+  });
+}
+
+export function getClips(clubId: string) {
+  return apiFetch<{ clips: ClipsByMatch }>(`/api/club/${clubId}/clips`);
+}
+
+export function addClip(clubId: string, matchId: string, url: string, title?: string) {
+  return postJson<{ clip: MatchClip; clips: ClipsByMatch }>(`/api/club/${clubId}/clips`, {
+    matchId,
+    url,
+    title,
+  });
+}
+
+export function removeClip(clubId: string, clipId: string) {
+  return apiFetch<{ clips: ClipsByMatch }>(`/api/club/${clubId}/clips/${clipId}`, { method: "DELETE" });
+}
+
+export function getSavedMatches(clubId: string) {
+  return apiFetch<{ matches: SavedMatch[]; count: number }>(`/api/club/${clubId}/saved-matches`);
 }
 
 export function formatTimestamp(ts: number): string {

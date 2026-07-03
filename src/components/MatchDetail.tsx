@@ -6,9 +6,14 @@ import {
   playerStatRows,
   positionLabel,
   ratingClass,
+  redCards,
+  yellowCards,
   type MatchSide as Side,
 } from "../lib/matchStats";
 import MatchPitch from "./MatchPitch";
+import MatchClips from "./MatchClips";
+import { isNigerian, NigerianFlag, useClubExtras } from "./ClubExtrasContext";
+import { CardIcon, FootIcon } from "./icons";
 
 interface Props {
   match: Match;
@@ -33,7 +38,7 @@ function ScorerList({ side }: { side: Side }) {
       ))}
       {assisters.map((p) => (
         <div key={`a-${p.playername}`} className="scorer-line assist-line">
-          🅰 {p.playername}
+          <FootIcon /> {p.playername}
           {Number(p.assists) > 1 && ` ×${p.assists}`}
         </div>
       ))}
@@ -129,9 +134,12 @@ function PlayerRatingRow({
   isExpanded: boolean;
   onToggle: () => void;
 }) {
+  const extras = useClubExtras();
   const rating = parseFloat(player.rating);
   const goals = Number(player.goals);
   const assists = Number(player.assists);
+  const reds = redCards(player);
+  const yellows = yellowCards(player);
   const isMotm = player.mom === "1";
 
   return (
@@ -143,6 +151,7 @@ function PlayerRatingRow({
         <span className="rating-player-info">
           <span className="rating-player-name">
             {player.playername}
+            <NigerianFlag show={isNigerian(extras, player.playername)} />
             {isMotm && (
               <span className="motm-star" title="Man of the Match">
                 {" "}
@@ -154,7 +163,24 @@ function PlayerRatingRow({
         </span>
         <span className="rating-player-contrib">
           {goals > 0 && <span className="contrib-icon">⚽{goals > 1 ? `×${goals}` : ""}</span>}
-          {assists > 0 && <span className="contrib-icon">🅰{assists > 1 ? `×${assists}` : ""}</span>}
+          {assists > 0 && (
+            <span className="contrib-icon" title={`${assists} assist${assists > 1 ? "s" : ""}`}>
+              <FootIcon />
+              {assists > 1 ? `×${assists}` : ""}
+            </span>
+          )}
+          {yellows > 0 && (
+            <span className="contrib-icon" title={`${yellows} yellow card${yellows > 1 ? "s" : ""}`}>
+              <CardIcon color="yellow" />
+              {yellows > 1 ? `×${yellows}` : ""}
+            </span>
+          )}
+          {reds > 0 && (
+            <span className="contrib-icon" title="Red card">
+              <CardIcon color="red" />
+              {reds > 1 ? `×${reds}` : ""}
+            </span>
+          )}
         </span>
         <span className="expand-chevron">{isExpanded ? "▲" : "▼"}</span>
       </button>
@@ -250,6 +276,8 @@ export default function MatchDetail({ match, clubId }: Props) {
       )}
 
       {tab === "stats" && <TeamComparison us={us} them={them} />}
+
+      <MatchClips matchId={match.matchId} />
     </div>
   );
 }

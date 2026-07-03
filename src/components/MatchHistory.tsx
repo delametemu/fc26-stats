@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { Match } from "../types";
 import { formatTimestamp } from "../api";
 import MatchDetail from "./MatchDetail";
+import { useClubExtras } from "./ClubExtrasContext";
 
 interface Props {
   matches: Match[];
@@ -48,6 +49,7 @@ function scorersSummary(match: Match, clubId: string): string {
 }
 
 export default function MatchHistory({ matches, clubId }: Props) {
+  const { clips } = useClubExtras();
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   if (!matches.length) {
@@ -62,6 +64,7 @@ export default function MatchHistory({ matches, clubId }: Props) {
 
         const isExpanded = expandedId === match.matchId;
         const scorers = scorersSummary(match, clubId);
+        const clipCount = clips[match.matchId]?.length ?? 0;
 
         return (
           <div key={match.matchId}>
@@ -80,6 +83,9 @@ export default function MatchHistory({ matches, clubId }: Props) {
               <div className="match-date">
                 {formatTimestamp(match.timestamp)}
                 {scorers && <span className="scorers"> · ⚽ {scorers}</span>}
+                {clipCount > 0 && (
+                  <span title={`${clipCount} clip${clipCount > 1 ? "s" : ""} attached`}> · 🎬 {clipCount}</span>
+                )}
                 <span className="expand-hint">{isExpanded ? " ▲ Hide details" : " ▼ Show details"}</span>
               </div>
             </button>

@@ -68,11 +68,17 @@ export interface MatchPlayerRow {
   cleansheetsdef?: string;
   cleansheetsgk?: string;
   redcards: string;
+  yellowcards?: string;
+  dribbles?: string;
+  dribblesmade?: string;
+  dribbleattempts?: string;
   mom: string;
   secondsPlayed: string;
   gameTime?: string;
   wins?: string;
   losses?: string;
+  /** EA occasionally adds fields; keep access open for stats like dribbles when they appear. */
+  [key: string]: string | undefined;
 }
 
 /** Summed team stats for one club in a match (numbers, unlike player stats). */
@@ -119,6 +125,60 @@ export interface OverallStatsEntry {
   unbeatenstreak?: string;
   promotions?: string;
   relegations?: string;
+}
+
+export interface NigerianAward {
+  id: string;
+  playerName: string;
+  matchId?: string;
+  opponentName?: string;
+  note?: string;
+  awardedAt: string;
+}
+
+export interface NigerianCount {
+  playerName: string;
+  count: number;
+  lastAwardedAt: string;
+}
+
+export interface NigerianData {
+  awards: NigerianAward[];
+  leaderboard: NigerianCount[];
+}
+
+export interface PotdTally {
+  playerName: string;
+  votes: number;
+}
+
+export interface PotdToday {
+  date: string;
+  tallies: PotdTally[];
+  totalVotes: number;
+  yourVote: string | null;
+  winner: string | null;
+}
+
+export interface PotdData {
+  today: PotdToday;
+  history: { date: string; winner: string; votes: number }[];
+}
+
+export interface MatchClip {
+  id: string;
+  matchId: string;
+  url: string;
+  title?: string;
+  addedAt: string;
+}
+
+export type ClipsByMatch = Record<string, MatchClip[]>;
+
+export interface SavedMatch {
+  match: Match;
+  matchType: "friendlyMatch" | "leagueMatch" | "playoffMatch";
+  savedAt: string;
 }
 
 export interface ClubDashboard {

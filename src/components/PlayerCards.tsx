@@ -7,14 +7,15 @@ import {
   num,
   passPct,
   perGame,
-  shotPct,
 } from "../lib/stats";
+import { isNigerian, NigerianFlag, useClubExtras } from "./ClubExtrasContext";
 
 interface Props {
   members: MemberStats[];
 }
 
 export default function PlayerCards({ members }: Props) {
+  const extras = useClubExtras();
   const sorted = [...members].sort((a, b) => parseFloat(b.ratingAve) - parseFloat(a.ratingAve));
 
   if (!sorted.length) {
@@ -29,7 +30,10 @@ export default function PlayerCards({ members }: Props) {
           <article key={p.name} className="player-card">
             <div className="player-card-top">
               <div>
-                <h3>{displayName(p)}</h3>
+                <h3>
+                  {displayName(p)}
+                  <NigerianFlag show={isNigerian(extras, p.name, p.proName)} />
+                </h3>
                 <p className="club-meta">
                   {displayPosition(p)} · {p.name}
                 </p>

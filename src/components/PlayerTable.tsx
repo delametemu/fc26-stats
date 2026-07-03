@@ -1,4 +1,4 @@
-import type { MemberStats } from "../types";
+import type { MemberStats, NigerianCount } from "../types";
 import {
   displayName,
   displayPosition,
@@ -10,13 +10,22 @@ import {
   shotPct,
   tacklePct,
 } from "../lib/stats";
+import { isNigerian, NigerianFlag, useClubExtras } from "./ClubExtrasContext";
 
 interface Props {
   members: MemberStats[];
+  nigerianLeaderboard?: NigerianCount[];
 }
 
-export default function PlayerTable({ members }: Props) {
+export default function PlayerTable({ members, nigerianLeaderboard }: Props) {
+  const extras = useClubExtras();
   const sorted = [...members].sort((a, b) => parseFloat(b.ratingAve) - parseFloat(a.ratingAve));
+
+  function nigerianCount(m: MemberStats): number {
+    if (!nigerianLeaderboard) return 0;
+    const names = [m.name.toLowerCase(), m.proName?.toLowerCase()];
+    return nigerianLeaderboard.find((row) => names.includes(row.playerName.toLowerCase()))?.count ?? 0;
+  }
 
   if (!sorted.length) {
     return <div className="empty">No player stats available for this club.</div>;
@@ -41,6 +50,7 @@ export default function PlayerTable({ members }: Props) {
             <th className="num">Tackle%</th>
             <th className="num">Shot%</th>
             <th className="num">MOTM</th>
+            <th className="num" title="Nigerian of the Match awards">🇳🇬 NOTM</th>
             <th className="num">Red Cards</th>
           </tr>
         </thead>
@@ -50,7 +60,10 @@ export default function PlayerTable({ members }: Props) {
             return (
               <tr key={p.name}>
                 <td>
-                  <strong>{displayName(p)}</strong>
+                  <strong>
+                    {displayName(p)}
+                    <NigerianFlag show={isNigerian(extras, p.name, p.proName)} />
+                  </strong>
                   <div className="club-meta">{p.name}</div>
                 </td>
                 <td>
@@ -68,6 +81,7 @@ export default function PlayerTable({ members }: Props) {
                 <td className="num">{tacklePct(p)}</td>
                 <td className="num">{shotPct(p)}</td>
                 <td className="num">{momCount(p)}</td>
+                <td className="num">{nigerianCount(p) || "—"}</td>
                 <td className={`num ${Number(p.redCards) > 0 ? "result-l" : ""}`}>{num(p.redCards)}</td>
               </tr>
             );
